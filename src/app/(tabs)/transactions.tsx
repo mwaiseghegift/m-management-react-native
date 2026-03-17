@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  RefreshControl,
+  View, Text, ScrollView, TouchableOpacity, StatusBar, Platform,
+  ActivityIndicator, RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
 import { useTransactions } from '@/hooks/useFinance';
 import { Transaction } from '@/types/financeManager';
+import { AddTransactionModal } from '@/components/modals/AddTransactionModal';
 
 type FilterType = 'all' | 'INC' | 'EXP';
 
@@ -73,6 +68,7 @@ function TransactionRow({ tx }: { tx: Transaction }) {
 export default function Transactions() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { transactions, count, loading, error, refetch } = useTransactions();
 
   const filtered = filter === 'all' ? transactions : transactions.filter(t => t.transaction_type === filter);
@@ -202,7 +198,7 @@ export default function Transactions() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity activeOpacity={0.85} style={{
+      <TouchableOpacity activeOpacity={0.85} onPress={() => setShowModal(true)} style={{
         position: 'absolute', bottom: Platform.OS === 'ios' ? 104 : 80, right: 24,
         width: 56, height: 56, borderRadius: 18, backgroundColor: Colors.indigoDark,
         alignItems: 'center', justifyContent: 'center',
@@ -210,6 +206,12 @@ export default function Transactions() {
       }}>
         <Ionicons name="add" size={28} color="#FFFFFF" />
       </TouchableOpacity>
+
+      <AddTransactionModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSuccess={refetch}
+      />
     </View>
   );
 }

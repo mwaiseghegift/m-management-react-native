@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { AddTransactionModal } from '@/components/modals/AddTransactionModal';
+import { TransactionType } from '@/types/financeManager';
 import { Colors } from '@/constants/colors';
 import { SummaryCard } from '@/components/ui/Card';
 import { useDashboard } from '@/hooks/useFinance';
@@ -194,7 +196,11 @@ function TransactionRow({ tx }: { tx: Transaction }) {
 export default function Dashboard() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { summary, allowance, transactions, refetchAll } = useDashboard();
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [showTxModal, setShowTxModal] = useState(false);
+  const [defaultTxType, setDefaultTxType] = useState<TransactionType>('EXP');
+
+  const openTxModal = (type: TransactionType) => { setDefaultTxType(type); setShowTxModal(true); };
 
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }).start();
@@ -279,8 +285,8 @@ export default function Dashboard() {
               Quick Actions
             </Text>
             <View style={{ flexDirection: 'row' }}>
-              <QuickAction icon="arrow-up-circle" label="Add Income" color={Colors.successText} bg={Colors.successBg} />
-              <QuickAction icon="arrow-down-circle" label="Add Expense" color={Colors.dangerText} bg={Colors.dangerBg} />
+              <QuickAction icon="arrow-up-circle" label="Add Income" color={Colors.successText} bg={Colors.successBg} onPress={() => openTxModal('INC')} />
+              <QuickAction icon="arrow-down-circle" label="Add Expense" color={Colors.dangerText} bg={Colors.dangerBg} onPress={() => openTxModal('EXP')} />
               <QuickAction icon="receipt" label="Pay Bill" color={Colors.violetLight} bg={Colors.violet + '20'} />
               <QuickAction icon="bar-chart" label="Reports" color={Colors.warning} bg={Colors.warningBg} />
             </View>
@@ -324,7 +330,7 @@ export default function Dashboard() {
               <Text style={{ color: Colors.textMuted, fontSize: 13, textAlign: 'center', lineHeight: 20 }}>
                 Add your first income or expense{'\n'}to start tracking your flow.
               </Text>
-              <TouchableOpacity activeOpacity={0.8} style={{
+              <TouchableOpacity onPress={() => openTxModal('EXP')} activeOpacity={0.8} style={{
                 marginTop: 20, paddingHorizontal: 24, paddingVertical: 12,
                 backgroundColor: Colors.indigoDark, borderRadius: 14,
                 borderWidth: 1, borderColor: Colors.indigo + '70',
@@ -335,6 +341,13 @@ export default function Dashboard() {
           )}
         </View>
       </ScrollView>
+
+      <AddTransactionModal
+        visible={showTxModal}
+        onClose={() => setShowTxModal(false)}
+        onSuccess={refetchAll}
+        defaultType={defaultTxType}
+      />
     </View>
   );
 }

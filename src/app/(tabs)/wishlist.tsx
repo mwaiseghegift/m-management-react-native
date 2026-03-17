@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
 import { useWishlist } from '@/hooks/useFinance';
 import { Wishlist } from '@/types/financeManager';
+import { AddWishlistModal } from '@/components/modals/AddWishlistModal';
 
 type WishlistFilter = 'all' | 'cool' | 'waiting';
 
@@ -119,6 +120,7 @@ function ProtocolCard() {
 export default function WishlistScreen() {
   const [filter, setFilter] = useState<WishlistFilter>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { items, coolItems, waitingItems, count, loading, error, refetch } = useWishlist();
 
   const filtered = filter === 'all' ? items : filter === 'cool' ? items.filter(i => i.is_cool && !i.is_purchased) : items.filter(i => !i.is_cool && !i.is_purchased);
@@ -218,7 +220,7 @@ export default function WishlistScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity activeOpacity={0.85} style={{
+      <TouchableOpacity activeOpacity={0.85} onPress={() => setShowModal(true)} style={{
         position: 'absolute', bottom: Platform.OS === 'ios' ? 104 : 80, right: 24,
         width: 56, height: 56, borderRadius: 18, backgroundColor: Colors.violet + '40',
         alignItems: 'center', justifyContent: 'center',
@@ -227,6 +229,12 @@ export default function WishlistScreen() {
       }}>
         <Ionicons name="add" size={28} color={Colors.violetLight} />
       </TouchableOpacity>
+
+      <AddWishlistModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSuccess={refetch}
+      />
     </View>
   );
 }

@@ -8,6 +8,7 @@ import { Colors } from '@/constants/colors';
 import { useBills } from '@/hooks/useFinance';
 import { Bill, BillFrequency } from '@/types/financeManager';
 import { financeService } from '@/services/financeservice';
+import { AddBillModal } from '@/components/modals/AddBillModal';
 
 type BillFilter = 'all' | 'upcoming' | 'paid';
 
@@ -88,6 +89,7 @@ function BillRow({ bill, onPay }: { bill: Bill; onPay: (id: string) => void }) {
 export default function Bills() {
   const [filter, setFilter] = useState<BillFilter>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { bills, dueThisMonth, paidThisMonth, overdueCount, loading, error, refetch } = useBills();
 
   const now = new Date();
@@ -213,7 +215,7 @@ export default function Bills() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity activeOpacity={0.85} style={{
+      <TouchableOpacity activeOpacity={0.85} onPress={() => setShowModal(true)} style={{
         position: 'absolute', bottom: Platform.OS === 'ios' ? 104 : 80, right: 24,
         width: 56, height: 56, borderRadius: 18, backgroundColor: Colors.indigoDark,
         alignItems: 'center', justifyContent: 'center',
@@ -221,6 +223,12 @@ export default function Bills() {
       }}>
         <Ionicons name="add" size={28} color="#FFFFFF" />
       </TouchableOpacity>
+
+      <AddBillModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSuccess={refetch}
+      />
     </View>
   );
 }

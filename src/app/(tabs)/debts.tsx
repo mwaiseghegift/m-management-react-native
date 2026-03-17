@@ -6,8 +6,9 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
 import { useDebts } from '@/hooks/useFinance';
-import { Debt, DebtDirection, DebtStatus } from '@/types/financeManager';
+import { Debt, DebtStatus } from '@/types/financeManager';
 import { financeService } from '@/services/financeservice';
+import { AddDebtModal } from '@/components/modals/AddDebtModal';
 
 type DebtFilter = 'all' | 'BORROWED' | 'LENT';
 
@@ -83,6 +84,7 @@ function DebtRow({ debt, onNudge }: { debt: Debt; onNudge: (id: string) => void 
 export default function Debts() {
   const [filter, setFilter] = useState<DebtFilter>('all');
   const [refreshing, setRefreshing] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const { debts, iOwe, owedToMe, loading, error, refetch } = useDebts();
 
   const filtered = filter === 'all' ? debts : debts.filter(d => d.direction === filter);
@@ -219,7 +221,7 @@ export default function Debts() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity activeOpacity={0.85} style={{
+      <TouchableOpacity activeOpacity={0.85} onPress={() => setShowModal(true)} style={{
         position: 'absolute', bottom: Platform.OS === 'ios' ? 104 : 80, right: 24,
         width: 56, height: 56, borderRadius: 18, backgroundColor: Colors.indigoDark,
         alignItems: 'center', justifyContent: 'center',
@@ -227,6 +229,12 @@ export default function Debts() {
       }}>
         <Ionicons name="add" size={28} color="#FFFFFF" />
       </TouchableOpacity>
+
+      <AddDebtModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        onSuccess={refetch}
+      />
     </View>
   );
 }
