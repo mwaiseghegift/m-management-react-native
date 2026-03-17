@@ -1,66 +1,92 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/colors";
+import { Platform } from "react-native";
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "#8E8E93",
-        headerShown: true,
-        headerStyle: {
-          backgroundColor: "#fff",
+        headerShown: false,
+        tabBarActiveTintColor: Colors.tabActive,
+        tabBarInactiveTintColor: Colors.tabInactive,
+        tabBarStyle: {
+          backgroundColor: Colors.tabBarBg,
+          borderTopWidth: 1,
+          borderTopColor: Colors.border,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+          paddingTop: 8,
+          height: Platform.OS === 'ios' ? 84 : 64,
         },
-        headerShadowVisible: false,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          letterSpacing: 0.2,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dashboard",
           tabBarLabel: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="transactions"
         options={{
-          title: "Ledger",
-          tabBarLabel: "Transactions",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="swap-horizontal-outline" size={size} color={color} />
+          tabBarLabel: "Ledger",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "swap-horizontal" : "swap-horizontal-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="debts"
         options={{
-          title: "Social Accounting",
           tabBarLabel: "Debts",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people-outline" size={size} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "people" : "people-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="wishlist"
         options={{
-          title: "Intentional Spending",
           tabBarLabel: "Wishlist",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="heart-outline" size={size} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "heart" : "heart-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="bills"
         options={{
-          title: "Commitments",
           tabBarLabel: "Bills",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt-outline" size={size} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "receipt" : "receipt-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />

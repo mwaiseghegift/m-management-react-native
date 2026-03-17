@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ViewProps } from 'react-native';
+import { Colors } from '@/constants/colors';
 
 interface CardProps extends ViewProps {
   title?: string;
@@ -7,16 +8,22 @@ interface CardProps extends ViewProps {
   children: React.ReactNode;
 }
 
-export const Card = ({ title, subtitle, children, className, ...props }: CardProps) => {
+export const Card = ({ title, subtitle, children, style, ...props }: CardProps) => {
   return (
-    <View 
-      className={`bg-white rounded-3xl p-5 shadow-sm border border-gray-100 ${className || ''}`}
+    <View
+      style={[{
+        backgroundColor: Colors.bgCard,
+        borderRadius: 24,
+        padding: 20,
+        borderWidth: 1,
+        borderColor: Colors.border,
+      }, style]}
       {...props}
     >
       {(title || subtitle) && (
-        <View className="mb-4">
-          {title && <Text className="text-lg font-bold text-gray-900">{title}</Text>}
-          {subtitle && <Text className="text-sm text-gray-500">{subtitle}</Text>}
+        <View style={{ marginBottom: 16 }}>
+          {title && <Text style={{ fontSize: 18, fontWeight: '700', color: Colors.textPrimary }}>{title}</Text>}
+          {subtitle && <Text style={{ fontSize: 14, color: Colors.textSecondary }}>{subtitle}</Text>}
         </View>
       )}
       {children}
@@ -24,42 +31,63 @@ export const Card = ({ title, subtitle, children, className, ...props }: CardPro
   );
 };
 
-export const SummaryCard = ({ 
-  label, 
-  value, 
+export const SummaryCard = ({
+  label,
+  value,
   type = 'default',
-  className 
-}: { 
-  label: string, 
-  value: string, 
-  type?: 'default' | 'success' | 'danger' | 'primary',
-  className?: string 
+  style,
+}: {
+  label: string;
+  value: string;
+  type?: 'default' | 'success' | 'danger' | 'primary';
+  style?: object;
 }) => {
-  const bgColors = {
-    default: 'bg-white',
-    success: 'bg-emerald-50',
-    danger: 'bg-rose-50',
-    primary: 'bg-blue-600',
+  const configs = {
+    default: {
+      bg: Colors.bgCard,
+      valueCo: Colors.textPrimary,
+      labelCo: Colors.textSecondary,
+      border: Colors.border,
+    },
+    success: {
+      bg: Colors.successBg,
+      valueCo: Colors.successText,
+      labelCo: Colors.success,
+      border: '#0D3D2A',
+    },
+    danger: {
+      bg: Colors.dangerBg,
+      valueCo: Colors.dangerText,
+      labelCo: Colors.danger,
+      border: '#3D1010',
+    },
+    primary: {
+      bg: Colors.indigoDark,
+      valueCo: '#FFFFFF',
+      labelCo: '#C7D2FE',
+      border: Colors.indigo,
+    },
   };
 
-  const textColors = {
-    default: 'text-gray-900',
-    success: 'text-emerald-600',
-    danger: 'text-rose-600',
-    primary: 'text-white',
-  };
-
-  const labelColors = {
-    default: 'text-gray-500',
-    success: 'text-emerald-500',
-    danger: 'text-rose-500',
-    primary: 'text-blue-100',
-  };
+  const cfg = configs[type];
 
   return (
-    <View className={`${bgColors[type]} rounded-2xl p-4 shadow-sm flex-1 ${type === 'primary' ? 'shadow-blue-200' : 'border border-gray-100'} ${className || ''}`}>
-      <Text className={`text-xs font-semibold uppercase tracking-wider mb-1 ${labelColors[type]}`}>{label}</Text>
-      <Text className={`text-xl font-bold ${textColors[type]}`}>{value}</Text>
+    <View
+      style={[{
+        backgroundColor: cfg.bg,
+        borderRadius: 20,
+        padding: 16,
+        flex: 1,
+        borderWidth: 1,
+        borderColor: cfg.border,
+      }, style]}
+    >
+      <Text style={{ fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, color: cfg.labelCo, marginBottom: 6 }}>
+        {label}
+      </Text>
+      <Text style={{ fontSize: 20, fontWeight: '800', color: cfg.valueCo }}>
+        {value}
+      </Text>
     </View>
   );
 };
